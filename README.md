@@ -102,6 +102,37 @@ npm start
 claude
 ```
 
+## Also Works with OpenCode!
+
+OpenCode already supports Ollama Cloud directly. You can use it without this proxy!
+
+### Using OpenCode with Ollama Cloud
+
+```bash
+# Set your Ollama API key
+set OLLAMA_API_KEY=your_api_key_here
+
+# Run OpenCode with Ollama Cloud model
+opencode -m ollama/minimax-m2.5:cloud
+opencode -m ollama/glm-5:cloud
+opencode -m ollama/kimi-k2.5:cloud
+```
+
+Or set environment variable globally:
+```bash
+# Windows
+setx OLLAMA_API_KEY your_api_key_here
+
+# Linux/macOS
+export OLLAMA_API_KEY=your_api_key_here
+```
+
+### Available Ollama Cloud Models in OpenCode
+
+- `ollama/glm-5:cloud`
+- `ollama/kimi-k2.5:cloud`
+- `ollama/minimax-m2.5:cloud`
+
 ## Configuration
 
 ### config.json Options
