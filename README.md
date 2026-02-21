@@ -48,10 +48,7 @@ Create a `config.json` file:
   "port": 8080,
   "host": "0.0.0.0",
   "ollamaBaseUrl": "https://ollama.com/api",
-  "apiKeys": [
-    "YOUR_OLLAMA_API_KEY_1",
-    "YOUR_OLLAMA_API_KEY_2"
-  ],
+  "apiKeys": ["YOUR_OLLAMA_API_KEY_1", "YOUR_OLLAMA_API_KEY_2"],
   "defaultModel": "qwen3-coder-next",
   "modelMapping": {
     "claude-opus-4-6-thinking": "glm-5",
@@ -102,32 +99,93 @@ npm start
 claude
 ```
 
-## Also Works with OpenCode!
+## Using OpenCode via This Proxy
 
-OpenCode already supports Ollama Cloud directly. You can use it without this proxy!
+This proxy exposes an **OpenAI-compatible** `/v1/chat/completions` endpoint in addition to the Anthropic `/v1/messages` endpoint. OpenCode's custom provider system uses the OpenAI-compatible format, so you can route OpenCode through this proxy for multi-key rotation, model mapping, and all other proxy features.
 
-### Using OpenCode with Ollama Cloud
+### 1. Start the Proxy
+
+```bash
+npm start
+# Proxy listening at http://localhost:8080
+```
+
+### 2. Configure OpenCode
+
+Add an `opencode.json` file in your project (or at `~/.config/opencode/opencode.json` for global config):
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "ollama-cloud-proxy": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Ollama Cloud (Proxy)",
+      "options": {
+        "baseURL": "http://localhost:8080/v1",
+        "apiKey": "proxy"
+      },
+      "models": {
+        "kimi-k2.5": {
+          "name": "Kimi K2.5 (1.1T)",
+          "limit": { "context": 131072, "output": 8192 }
+        },
+        "glm-5": {
+          "name": "GLM-5 (756B)",
+          "limit": { "context": 131072, "output": 8192 }
+        },
+        "minimax-m2.5": {
+          "name": "MiniMax M2.5 (230B)",
+          "limit": { "context": 131072, "output": 8192 }
+        },
+        "qwen3-coder-next": {
+          "name": "Qwen3-Coder-Next (81B)",
+          "limit": { "context": 131072, "output": 8192 }
+        },
+        "deepseek-v3.2": {
+          "name": "DeepSeek V3.2 (688B)",
+          "limit": { "context": 131072, "output": 8192 }
+        }
+      }
+    }
+  },
+  "model": "ollama-cloud-proxy/kimi-k2.5"
+}
+```
+
+### 3. Run OpenCode
+
+```bash
+opencode
+```
+
+Select your model with `/models` inside OpenCode — all models configured above will appear under **Ollama Cloud (Proxy)**.
+
+### Why Use the Proxy Instead of Direct Ollama Cloud?
+
+| Feature                            | Direct (`opencode -m ollama/...`) | Via Proxy |
+| ---------------------------------- | --------------------------------- | --------- |
+| Multiple API keys with rotation    | ❌                                | ✅        |
+| Model name mapping                 | ❌                                | ✅        |
+| Centralized key management         | ❌                                | ✅        |
+| Works without local Ollama install | ❌ requires `ollama pull`         | ✅        |
+| Streaming                          | ✅                                | ✅        |
+
+### Option B: Direct Ollama Cloud (no proxy needed)
+
+OpenCode also supports Ollama Cloud natively if you prefer no proxy:
 
 ```bash
 # Set your Ollama API key
 set OLLAMA_API_KEY=your_api_key_here
 
-# Run OpenCode with Ollama Cloud model
+# Run OpenCode with Ollama Cloud model (requires local ollama pull first)
 opencode -m ollama/minimax-m2.5:cloud
 opencode -m ollama/glm-5:cloud
 opencode -m ollama/kimi-k2.5:cloud
 ```
 
-Or set environment variable globally:
-```bash
-# Windows
-setx OLLAMA_API_KEY your_api_key_here
-
-# Linux/macOS
-export OLLAMA_API_KEY=your_api_key_here
-```
-
-### Available Ollama Cloud Models in OpenCode
+### Available Ollama Cloud Models
 
 - `ollama/glm-5:cloud`
 - `ollama/kimi-k2.5:cloud`
@@ -137,26 +195,26 @@ export OLLAMA_API_KEY=your_api_key_here
 
 ### config.json Options
 
-| Option | Type | Description | Default |
-|--------|------|-------------|---------|
-| `port` | number | Server port | `8080` |
-| `host` | string | Bind address | `0.0.0.0` |
-| `ollamaBaseUrl` | string | Ollama API URL | `https://ollama.com/api` |
-| `apiKeys` | array | Array of API keys | `[]` |
-| `defaultModel` | string | Default model | `qwen3-coder-next` |
-| `modelMapping` | object | Model name mappings | `{}` |
-| `debug` | boolean | Enable debug logs | `false` |
+| Option          | Type    | Description         | Default                  |
+| --------------- | ------- | ------------------- | ------------------------ |
+| `port`          | number  | Server port         | `8080`                   |
+| `host`          | string  | Bind address        | `0.0.0.0`                |
+| `ollamaBaseUrl` | string  | Ollama API URL      | `https://ollama.com/api` |
+| `apiKeys`       | array   | Array of API keys   | `[]`                     |
+| `defaultModel`  | string  | Default model       | `qwen3-coder-next`       |
+| `modelMapping`  | object  | Model name mappings | `{}`                     |
+| `debug`         | boolean | Enable debug logs   | `false`                  |
 
 ### Environment Variables
 
-| Variable | Description |
-|----------|-------------|
-| `PORT` | Server port |
-| `HOST` | Bind address |
-| `OLLAMA_API_KEY` | API key(s), comma-separated for multiple |
-| `OLLAMA_BASE_URL` | Override Ollama URL |
-| `DEFAULT_MODEL` | Default model |
-| `DEBUG` | Enable debug logs |
+| Variable          | Description                              |
+| ----------------- | ---------------------------------------- |
+| `PORT`            | Server port                              |
+| `HOST`            | Bind address                             |
+| `OLLAMA_API_KEY`  | API key(s), comma-separated for multiple |
+| `OLLAMA_BASE_URL` | Override Ollama URL                      |
+| `DEFAULT_MODEL`   | Default model                            |
+| `DEBUG`           | Enable debug logs                        |
 
 ### Model Mapping
 
@@ -207,14 +265,14 @@ curl http://localhost:8080/health
 
 ## Available Models
 
-| Model | Size | Description |
-|-------|------|-------------|
-| `qwen3-coder-next` | 81B | Coding-focused, agentic |
-| `qwen3.5` | 397B | Vision-language |
-| `minimax-m2.5` | 230B | Productivity & coding |
-| `glm-5` | 756B | Advanced coding |
-| `deepseek-v3.2` | 688B | Reasoning & agent |
-| `kimi-k2.5` | 1.1T | Native multimodal |
+| Model              | Size | Description             |
+| ------------------ | ---- | ----------------------- |
+| `qwen3-coder-next` | 81B  | Coding-focused, agentic |
+| `qwen3.5`          | 397B | Vision-language         |
+| `minimax-m2.5`     | 230B | Productivity & coding   |
+| `glm-5`            | 756B | Advanced coding         |
+| `deepseek-v3.2`    | 688B | Reasoning & agent       |
+| `kimi-k2.5`        | 1.1T | Native multimodal       |
 
 Full list: https://ollama.com/search?c=cloud
 
