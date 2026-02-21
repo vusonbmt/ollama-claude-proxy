@@ -1,0 +1,53 @@
+{
+  "name": "ollama-claude-proxy",
+  "version": "1.0.0",
+  "description": "Anthropic-compatible API proxy for Ollama Cloud - Use Ollama models with Claude Code CLI",
+  "main": "src/index.js",
+  "type": "module",
+  "bin": {
+    "ollama-claude-proxy": "bin/cli.js"
+  },
+  "files": [
+    "src",
+    "bin"
+  ],
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "lint": "eslint src/",
+    "format": "prettier --write src/"
+  },
+  "keywords": [
+    "ollama",
+    "ollama-cloud",
+    "anthropic",
+    "claude",
+    "claude-code",
+    "proxy",
+    "api",
+    "ai",
+    "llm"
+  ],
+  "author": "vusonbmt",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com:vusonbmt/ollama-claude-proxy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vusonbmt/ollama-claude-proxy/issues"
+  },
+  "homepage": "https://github.com/vusonbmt/ollama-claude-proxy#readme"
+}

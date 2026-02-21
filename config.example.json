@@ -1,0 +1,19 @@
+{
+  "port": 8080,
+  "host": "0.0.0.0",
+  "ollamaBaseUrl": "https://ollama.com/api",
+  "apiKey": "your-ollama-api-key-here",
+  "defaultModel": "qwen3-coder-next",
+  "modelMapping": {
+    "claude-opus-4-6-thinking": {
+      "mapping": "qwen3-coder-next"
+    },
+    "claude-sonnet-4-5-thinking": {
+      "mapping": "qwen3-coder-next"
+    },
+    "claude-haiku-3-5": {
+      "mapping": "qwen3.5"
+    }
+  },
+  "debug": false
+}
